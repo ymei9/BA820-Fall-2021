@@ -38,25 +38,48 @@ from sklearn.preprocessing import StandardScaler
 import scikitplot as skplt
 
 
-# COLAB setup ------------------------------------------
-# from google.colab import auth
-# auth.authenticate_user()
-# PROJECT = ''    # <------ change to your project
-# SQL = "SELECT * from `questrom.datasets.judges`"
-# judges = pd.read_gbq(SQL, PROJECT)
-
-
 # dataset urls:
 # https://vincentarelbundock.github.io/Rdatasets/csv/Stat2Data/Election08.csv
 # https://vincentarelbundock.github.io/Rdatasets/csv/Stat2Data/MedGPA.csv
 
+judges = pd.read_csv('/Users/yuxuanmei/Documents/GitHub/BA820-Fall-2021/sessions/03-kmeans/bq-results-20211027-104231-rq7b7sbqro47.csv')
+
+# lower case column names
+
+judges.columns = judges.columns.str.lower()
+judges.set_index('judge', inplace=True)
+judges.head()
+
+judges.dtypes
+judges.describe().T
+
+# fit our first kmean -- 3 clusters
+k3 = KMeans(n_clusters=3, random_state=820)
+k3.fit(judges)
+k3_labs = k3.predict(judges)
+k3_labs
+
+# number of iterations took to converge
+k3.n_iter_
+
+# put clusters back into dataset
+judges['k3'] = k3_labs
+
+judges
+
+# start to profile / learn about our cluster
+judges.k3.value_counts()
+
+
 
 # useful code snippets below ---------------------------------
 
+election = pd.read_csv('/Users/yuxuanmei/Documents/GitHub/BA820-Fall-2021/sessions/03-kmeans/Election08.csv')
+
 # scale the data
-# el_scaler = StandardScaler()
-# el_scaler.fit(election)
-# election_scaled = el_scaler.transform(election)
+el_scaler = StandardScaler()
+el_scaler.fit(election)
+election_scaled = el_scaler.transform(election)
 
 # kmeans
 # k5 = KMeans(5,  n_init=100)
