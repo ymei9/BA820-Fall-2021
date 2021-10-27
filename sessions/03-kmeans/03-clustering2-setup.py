@@ -55,6 +55,7 @@ judges.describe().T
 
 # fit our first kmean -- 3 clusters
 k3 = KMeans(n_clusters=3, random_state=820)
+KMeans()
 k3.fit(judges)
 k3_labs = k3.predict(judges)
 k3_labs
@@ -70,7 +71,50 @@ judges
 # start to profile / learn about our cluster
 judges.k3.value_counts()
 
+judges.groupby('k3').mean().T
 
+# fit a cluster of 5
+k5=KMeans(5)
+k5.fit(judges)
+k5_labs = k5.predict(judges)
+judges['k5'] = k5_labs
+judges.groupby('k5').mean().T
+
+# plots
+k5_centers = k5.cluster_centers_
+sns.scatterplot(data=judges, x="cont", y="intg", cmap="virdis", hue="k3")
+plt.show()
+plt.scatter(k5_centers[:,0], k5_centers[:,1], c="g", s=100)
+plt.show()
+
+sns.heatmap(judges)
+plt.show()
+
+## goodness of fit
+k3.inertia_
+k5.inertia_
+
+KRANGE = range(2, 11)
+# containers
+ss = []
+for k in KRANGE: 
+    km = KMeans(k)
+    lab = km.fit_predict(judges)
+    ss.append(km.inertia_)
+ss
+sns.lineplot(KRANGE, ss)
+plt.show()
+
+silo_overall = metrics.silhouette_score(judges, k5.predict(judges))
+judges.drop(columns = 'k5', inplace=True)
+silo_overall
+
+silo_sample = metrics.silhouette_samples(judges, k5.predict(judges))
+silo_sample
+silo_sample.shape
+
+skplt.metrics.plot_silhouette(judges, k5.predict(judges), figsize=(7,7))
+plt.show()
 
 # useful code snippets below ---------------------------------
 
@@ -80,25 +124,3 @@ election = pd.read_csv('/Users/yuxuanmei/Documents/GitHub/BA820-Fall-2021/sessio
 el_scaler = StandardScaler()
 el_scaler.fit(election)
 election_scaled = el_scaler.transform(election)
-
-# kmeans
-# k5 = KMeans(5,  n_init=100)
-# judges['k5'] = k5.fit_predict(j)
-
-
-# k5_centers = k5.cluster_centers_
-# sns.scatterplot(data=judges, x="CONT", y="INTG", cmap="virdis", hue="k5")
-# plt.scatter(k5_centers[:,0], k5_centers[:,1], c="g", s=100)
-
-
-# KRANGE = range(2, 30)
-# # containers
-# ss = []
-# for k in KRANGE:
-#   km = KMeans(k)
-#   lab = km.fit_predict(j)
-#   ss.append(km.inertia_)
-
-
-# skplt.metrics.plot_silhouette(j, k5.predict(j), figsize=(7,7))
-
