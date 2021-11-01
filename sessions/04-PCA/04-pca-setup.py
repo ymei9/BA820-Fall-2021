@@ -17,6 +17,7 @@
 # imports
 import numpy as np
 import pandas as pd
+from pandas.core.tools.datetimes import Scalar
 import seaborn as sns
 import matplotlib.pyplot as plt
 
@@ -51,7 +52,37 @@ from matplotlib import cm
 # 4. generate the silohouette plot for the solution
 # 5. create a boxplot of the column carat by cluster label (one boxplot for each cluster)
 
+diamonds = pd.read_csv('/Users/yuxuanmei/Documents/GitHub/BA820-Fall-2021/sessions/04-PCA/diamonds.csv')
+diamonds = diamonds.select_dtypes(['number'])
 
+# standardize the data
+sclaer = StandardScaler()
+sclaer.fit(diamonds)
+dia_scaled = sclaer.transform(diamonds)
+
+dia_scaled
+
+# fit a cluster of 5
+k5 = KMeans(n_clusters=5)
+KMeans()
+k5.fit(dia_scaled)
+k5_labs = k5.predict(dia_scaled)
+k5_labs
+
+# append on original dataset
+diamonds['k5'] = k5_labs
+diamonds
+
+# boxplot against carat
+import seaborn as sns
+sns.boxplot(data = diamonds, x ='k5', y = 'carat')
+plt.show()
+
+# silohouette plot
+skplt.metrics.plot_silhouette(dia_scaled, k5_labs, figsize=(7,7))
+plt.show()
+
+k5.inertia_
 
 ##############################################################################
 ## Code snippets for our discussion
@@ -86,7 +117,6 @@ from matplotlib import cm
 
 
 
-
 ##############################################################################
 ## PRACTICE: Data Exercise
 ##############################################################################
@@ -110,3 +140,85 @@ from matplotlib import cm
 # from sklearn.metrics import r2_score 
 
 # in this case, does dimensionality reduction help us?
+
+judges = pd.read_csv('/Users/yuxuanmei/Documents/GitHub/BA820-Fall-2021/sessions/03-kmeans/bq-results-20211027-104231-rq7b7sbqro47.csv')
+
+judges.index = judges.judge
+del judges['judge']
+judges.info()
+judges.head()
+judges.describe().T
+
+# correlation matrix
+jc = judges.corr()
+sns.heatmap(jc, cmap='Reds', center=0)
+plt.show()
+
+# fit our first model for PCA
+ pca = PCA()
+ pcs = pca.fit_transform(judges)
+ pcs.shape
+
+ ## what is the explianed variance ratio
+ varexp = pca.explained_variance_ratio_
+ varexp
+
+ # plot
+ plt.title('Explained variance ration by component')
+ sns.lineplot(range(1, len(varexp)+1), varexp)
+ plt.show()
+
+# cumulative view
+plt.title('Explained variance ration by component')
+sns.lineplot(range(1, len(varexp)+1), np.cumsum(varexp))
+plt.axhline(.95)
+plt.show()
+
+# explained variance (not ratio)
+# use a threshold of 1, not ratio
+expvar = pca.explained_variance_
+
+plt.title('Explained variance by component')
+sns.lineplot(range(1, len(expvar)+1), expvar)
+plt.axhline(1)
+plt.show()
+
+# diamond dataset
+d2 = pd.read_csv('/Users/yuxuanmei/Documents/GitHub/BA820-Fall-2021/sessions/04-PCA/diamonds.csv')
+d2 = d2.select_dtypes(['number'])
+d2
+
+# rescale
+sclaer = StandardScaler()
+sclaer.fit(d2)
+ds2 = sclaer.transform(d2)
+df = pd.DataFrame(data = ds2)
+df.describe().T
+
+pca = PCA()
+pc_d2 = pca.fit_transform(ds2)
+pc_d2.shape
+
+## what is the explianed variance ratio
+varexp_d2 = pca.explained_variance_ratio_
+varexp_d2
+
+# plot
+plt.title('Explained variance ration by component')
+sns.lineplot(range(1, len(varexp_d2)+1), varexp_d2)
+plt.show()
+
+# cumulative view
+plt.title('Explained variance ration by component')
+sns.lineplot(range(1, len(varexp_d2)+1), np.cumsum(varexp_d2))
+plt.axhline(.95)
+plt.show()
+
+# explained variance (not ratio)
+# use a eigenvalue threshold of 1, not ratio
+expvar_d2 = pca.explained_variance_
+
+plt.title('Explained variance by component')
+sns.lineplot(range(1, len(expvar_d2)+1), expvar_d2)
+plt.axhline(1)
+plt.show()
