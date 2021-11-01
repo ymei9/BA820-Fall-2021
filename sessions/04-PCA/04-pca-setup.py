@@ -222,3 +222,22 @@ plt.title('Explained variance by component')
 sns.lineplot(range(1, len(expvar_d2)+1), expvar_d2)
 plt.axhline(1)
 plt.show()
+
+###### judges
+pca.n_components_
+comps = pca.components_
+COLS = ['PC' + str(i) for i in range(1, len(comps)+1)]
+
+loadings = pd.DataFrame(comps.T, columns = COLS, index=judges.T.index)
+loadings
+
+# plot 
+sns.heatmap(loadings, cmap = 'vlag')
+plt.show()
+
+# put the pcs to a new dataset
+comps_judges = pcs[:,:2]
+j = pd.DataFrame(comps_judges, columns = ['c1','c2'], index = judgesj.index)
+
+sns.scatterplot(data=j, x='c1',y='c2')
+plt.show()
