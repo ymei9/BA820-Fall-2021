@@ -1,0 +1,60 @@
+---
+title: "Untitled"
+author: "Brock Tibert"
+date: "10/27/2021"
+output: 
+  rmdformats::downcute:
+    self_contained: true
+    default_style: "light"
+    downcute_theme: "chaos"
+---
+
+## This is an Introduction
+
+This is some text.
+
+```{python}
+import pandas as pd
+import numpy as np
+import seaborn as sns
+import matplotlib.pyplot as plt
+```
+
+## Basic Setup
+
+Let's build out a simple dataset
+
+```{python}
+a = np.random.randint(0, 11, size=(12, 2))
+adf = pd.DataFrame(a, columns=['x', 'y'])
+```
+
+Let's look at the first few rows:
+
+```{python}
+adf.head(3)
+```
+
+## Plotting
+
+And now lets plot it up:
+
+```{python, echo=FALSE, results='hide'}
+# results = 'hide' still plots, but prevents the matplotlib text from printing
+sns.scatterplot(data=adf, x="x", y="y")
+plt.show()
+```
+
+We can think about this work here.^[This is a footnote]
+
+The above plot was created with the command:
+
+```{python echo=TRUE, eval=FALSE}
+sns.scatterplot(data=adf, x="x", y="y")
+plt.show()
+```
+
+
+> A block quote.
+
+

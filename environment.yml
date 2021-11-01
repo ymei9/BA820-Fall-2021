@@ -21,6 +21,7 @@ dependencies:
     - anyio==3.3.3
     - appnope==0.1.2
     - argon2-cffi==21.1.0
+    - asgiref==3.4.1
     - attrs==21.2.0
     - babel==2.9.1
     - backcall==0.2.0
@@ -28,11 +29,13 @@ dependencies:
     - cachetools==4.2.4
     - cffi==1.14.6
     - charset-normalizer==2.0.6
+    - click==8.0.3
     - cycler==0.10.0
     - debugpy==1.5.0
     - decorator==5.1.0
     - defusedxml==0.7.1
     - entrypoints==0.3
+    - fastapi==0.70.0
     - google-api-core==2.1.0
     - google-auth==2.3.0
     - google-auth-oauthlib==0.4.6
@@ -43,6 +46,8 @@ dependencies:
     - google-resumable-media==2.0.3
     - googleapis-common-protos==1.53.0
     - grpcio==1.41.0
+    - h11==0.12.0
+    - httptools==0.2.0
     - idna==3.2
     - ipykernel==6.4.1
     - ipython==7.28.0
@@ -94,11 +99,13 @@ dependencies:
     - pyasn1==0.4.8
     - pyasn1-modules==0.2.8
     - pycparser==2.20
+    - pydantic==1.8.2
     - pydata-google-auth==1.2.0
     - pygments==2.10.0
     - pyparsing==2.4.7
     - pyrsistent==0.18.0
     - python-dateutil==2.8.2
+    - python-dotenv==0.19.1
     - pytz==2021.3
     - pyyaml==5.4.1
     - pyzmq==22.3.0
@@ -113,6 +120,7 @@ dependencies:
     - send2trash==1.8.0
     - six==1.16.0
     - sniffio==1.2.0
+    - starlette==0.16.0
     - statsmodels==0.13.0
     - tenacity==8.0.1
     - terminado==0.12.1
@@ -123,7 +131,11 @@ dependencies:
     - typing-extensions==3.10.0.2
     - typing-inspect==0.7.1
     - urllib3==1.26.7
+    - uvicorn==0.15.0
+    - uvloop==0.16.0
+    - watchgod==0.7
     - wcwidth==0.2.5
     - webencodings==0.5.1
     - websocket-client==1.2.1
+    - websockets==10.0
 prefix: /Users/btibert/miniconda3/envs/ba820
