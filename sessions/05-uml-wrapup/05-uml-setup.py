@@ -123,25 +123,3 @@ from sklearn.cluster import KMeans
 
 
 
-################### Breakout Challenge
-## work as a group to combine UML and SML!
-## housing-prices tables on Big Query will be used questrom.datasets._______
-##     housing-train = your training set
-##     housing-test = the test set, does not have the target, BUT does have an ID that you will need for your submission
-##     housing-sample-submission = a sample of what a submission file should look like, note the id and your predicted value
-## 
-## use regression to predict median_house_value
-## 
-## you can use all of the techniques covered in the program, and this course
-## objective:  MAE - https://scikit-learn.org/stable/modules/generated/sklearn.metrics.mean_absolute_error.html
-##
-##
-## tips/tricks
-##    - ITERATE!  iteration is natural, and your friend
-##    - submit multiple times with the same team name
-##    - what would you guess without a model, start there!
-##    - you will need to submit for all IDs in the test file
-##    - it will error on submission if you don't submit 
-##
-## Leaderboard and submissions here: TBD
-## 
