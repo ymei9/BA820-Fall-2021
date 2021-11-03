@@ -237,7 +237,7 @@ plt.show()
 
 # put the pcs to a new dataset
 comps_judges = pcs[:,:2]
-j = pd.DataFrame(comps_judges, columns = ['c1','c2'], index = judgesj.index)
+j = pd.DataFrame(comps_judges, columns = ['c1','c2'], index = judges.index)
 
 sns.scatterplot(data=j, x='c1',y='c2')
 plt.show()
