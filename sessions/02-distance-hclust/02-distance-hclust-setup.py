@@ -28,7 +28,7 @@ from sklearn.preprocessing import StandardScaler
 # YOUR_BILLING_PROJECT = ""
 # cars = pd.read_gbq(SQL, YOUR_BILLING_PROJECT)
 
-cars = pd.read_csv('/Users/yuxuanmei/Documents/GitHub/BA820-Fall-2021/datasets/cars.csv')
+cars = pd.read_csv('/Users/yuxuanmei/Documents/GitHub/BA820_ym/sessions/02-distance-hclust/cars.csv')
 
 # useful code snippets below ---------------------------------
 
@@ -95,6 +95,7 @@ plt.show()
 
 # how to identify the clusters
 fcluster(hc1, 2, criterion = 'maxclust')
+fcluster()
 cars2['cluster1']  = fcluster(hc1, 2, criterion = 'maxclust')
 cars2.head(3)
 
