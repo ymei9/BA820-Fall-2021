@@ -7,25 +7,18 @@ from sklearn.cluster import KMeans, DBSCAN
 from sklearn.neighbors import NearestNeighbors
 from scipy.cluster.hierarchy import linkage, dendrogram, fcluster
 from scipy.spatial.distance import pdist, squareform
-
 from sklearn import metrics 
-from sklearn.datasets import make_blobs
 from sklearn.preprocessing import StandardScaler
 import scikitplot as skplt
-
 from sklearn.decomposition import PCA
-from sklearn.preprocessing import MinMaxScaler, StandardScaler
 from sklearn.manifold import MDS
 from sklearn.manifold import TSNE
-from sklearn import metrics
 
-# import os
-from PIL import Image
+# data ingestion
 forums = pd.read_pickle("/Users/yuxuanmei/Documents/GitHub/BA820_ym/assignments/assignment-01/forums.pkl")
 
 # data inspection and cleaning
 forums.head()
-
 forums.info()
 forums.shape
 forums.describe().T
@@ -40,6 +33,7 @@ forums
 # standardize data
 scaler = StandardScaler()
 scaled_forums = scaler.fit_transform(forums)
+scaled_forums.shape
 
 # distance
 cdist = pdist(scaled_forums)
@@ -113,7 +107,7 @@ plt.show()
 # cumulative view
 plt.title('Cumulative explained variance ration by component')
 sns.lineplot(range(1, len(varexp)+1), np.cumsum(varexp))
-plt.axhline(.85)
+plt.axhline(.85, color = 'red', linestyle = 'dashed')
 plt.show()
 
 # put the pcs to a new dataset
@@ -178,77 +172,83 @@ silo_sample.shape
 skplt.metrics.plot_silhouette(tdata, k5.predict(tdata), figsize=(7,7))
 plt.show()
 
+# cluster with k = 5
+lab_final = k5.predict(tdata)
+tdata['label'] = lab_final
 
-
+plt.title('Cluster result')
+sns.scatterplot(data=tdata, x='e1', y='e2', hue='label')
+plt.show()
 
 
 #####################
+#####################
 
-# PCA
-pca2 = PCA(.9)
-pcs2 = pca2.fit_transform(forums)
-forums
-pcs2.shape
+# do everything again on unscaled data (testing purpose)
+# # PCA
+# pca2 = PCA(.9)
+# pcs2 = pca2.fit_transform(forums)
+# forums
+# pcs2.shape
 
+# # put the pcs to a new dataset
+# forums_pc2 = pd.DataFrame(pcs2, index = forums.index)
+# forums_pc2.head(3)
 
+# TSNE()
 
-# put the pcs to a new dataset
-forums_pc2 = pd.DataFrame(pcs2, index = forums.index)
-forums_pc2.head(3)
+# # tsne analysis to further reduce demension
+# tsne2 = TSNE(perplexity=50)
+# tsne2.fit(forums_pc2)
 
+# # get the embeddings
+# te2 = tsne2.embedding_
+# te2.shape
 
-# tsne analysis to further reduce demension
-tsne2 = TSNE(perplexity=50)
-tsne2.fit(forums_pc2)
+# # 2d tsne dataframe
+# tdata2 = pd.DataFrame(te2, columns = ['e1', 'e2'])
+# tdata2.head(3)
 
-# get the embeddings
-te2 = tsne2.embedding_
-te2.shape
+# # # tsne plot
+# # plt.figure(figsize=(10, 8))
+# # plt.title('TSNE plot')
+# # sns.scatterplot(x="e1", y="e2", data=tdata, legend="full")
+# # plt.show()
 
-# 2d tsne dataframe
-tdata2 = pd.DataFrame(te2, columns = ['e1', 'e2'])
-tdata2.head(3)
+# # K-means clustering
+# KRANGE = range(2, 15)
+# # containers for inertia and silhouette scores
+# ss_tsne2 = []
+# avg_silo_tsne2 = []
+# for k in KRANGE: 
+#     km = KMeans(k)
+#     lab = km.fit_predict(tdata2)
+#     avg_silo_tsne2.append(metrics.silhouette_score(tdata2, km.predict(tdata2)))
+#     ss_tsne2.append(km.inertia_)
 
-# # tsne plot
-# plt.figure(figsize=(10, 8))
-# plt.title('TSNE plot')
-# sns.scatterplot(x="e1", y="e2", data=tdata, legend="full")
+# plt.title('Inertia with PCA and TSNE')
+# sns.lineplot(KRANGE, ss_tsne2)
+# plt.axvline(x = 6, linestyle = 'dashed', color = 'red')
+# plt.axvline(x = 7, linestyle = 'dashed', color = 'green')
 # plt.show()
 
-# K-means clustering
-KRANGE = range(2, 15)
-# containers for inertia and silhouette scores
-ss_tsne2 = []
-avg_silo_tsne2 = []
-for k in KRANGE: 
-    km = KMeans(k)
-    lab = km.fit_predict(tdata2)
-    avg_silo_tsne2.append(metrics.silhouette_score(tdata2, km.predict(tdata2)))
-    ss_tsne2.append(km.inertia_)
+# plt.title('Silhouette score with PCA and TSNE')
+# sns.lineplot(KRANGE, avg_silo_tsne2)
+# plt.axvline(x = 6, linestyle = 'dashed', color = 'red')
+# plt.axvline(x = 7, linestyle = 'dashed', color = 'green')
+# plt.show()
 
-plt.title('Inertia with PCA and TSNE')
-sns.lineplot(KRANGE, ss_tsne2)
-plt.axvline(x = 6, linestyle = 'dashed', color = 'red')
-plt.axvline(x = 7, linestyle = 'dashed', color = 'green')
-plt.show()
+# # choose k = 7
+# k7 = KMeans(7)
+# k7.fit(tdata2)
 
-plt.title('Silhouette score with PCA and TSNE')
-sns.lineplot(KRANGE, avg_silo_tsne2)
-plt.axvline(x = 6, linestyle = 'dashed', color = 'red')
-plt.axvline(x = 7, linestyle = 'dashed', color = 'green')
-plt.show()
+# # check the silhouette score
+# silo_overall = metrics.silhouette_score(tdata, k6.predict(tdata))
+# silo_overall
 
-# choose k = 7
-k7 = KMeans(7)
-k7.fit(tdata2)
+# silo_sample = metrics.silhouette_samples(tdata, k6.predict(tdata))
+# silo_sample
+# silo_sample.shape
 
-# check the silhouette score
-silo_overall = metrics.silhouette_score(tdata, k6.predict(tdata))
-silo_overall
-
-silo_sample = metrics.silhouette_samples(tdata, k6.predict(tdata))
-silo_sample
-silo_sample.shape
-
-skplt.metrics.plot_silhouette(tdata2, k7.predict(tdata2), figsize=(7,7))
-plt.show()
+# skplt.metrics.plot_silhouette(tdata2, k7.predict(tdata2), figsize=(7,7))
+# plt.show()
