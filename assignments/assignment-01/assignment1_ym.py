@@ -15,7 +15,8 @@ from sklearn.manifold import MDS
 from sklearn.manifold import TSNE
 
 # data ingestion
-forums = pd.read_pickle("/Users/yuxuanmei/Documents/GitHub/BA820_ym/assignments/assignment-01/forums.pkl")
+#url = 'https://github.com/Btibert3/BA820-Fall-2021/blob/d7f6ed4ff4e6f7daf198595b7dc2c8ee2ad3113b/assignments/assignment-01/forums.pkl'
+forums = pd.read_pickle('assignments/assignment-01/forums.pkl')
 
 # data inspection and cleaning
 forums.head()
@@ -34,6 +35,7 @@ forums
 scaler = StandardScaler()
 scaled_forums = scaler.fit_transform(forums)
 scaled_forums.shape
+pd.DataFrame(scaled_forums).describe().T
 
 # distance
 cdist = pdist(scaled_forums)
@@ -41,6 +43,7 @@ cdist = pdist(scaled_forums)
 # squareform distance heatmap
 sns.heatmap(squareform(cdist), cmap='Reds')
 plt.show()
+# the heatmap does not provide much useful information
 
 
 # hclust
@@ -66,6 +69,7 @@ plt.show()
 # correlation heatmap
 sns.heatmap(pd.DataFrame(scaled_forums).corr())
 plt.show()
+# the heatmap does not provide much useful information
 
 # K-means cluster without PCA
 
