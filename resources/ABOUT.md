@@ -112,6 +112,7 @@ Below are some resources for association rules.
 - [Another good TSNE and UMAP review and tool](https://pair-code.github.io/understanding-umap/) 
 - [How UMAP works](https://towardsdatascience.com/how-exactly-umap-works-13e3040e1668) 
 - [Recommendation Engines in python](https://realpython.com/build-recommendation-engine-collaborative-filtering/) 
+- [UMAP - A great review](https://towardsdatascience.com/umap-dimensionality-reduction-an-incredibly-robust-machine-learning-algorithm-b5acb01de568)
 
 
 ## Regular Expressions
