@@ -74,6 +74,7 @@ eo.loc[eo.cluster==4, :]
 SQL = "SELECT * from `questrom.datasets.judges`"
 PROJECT = "questrom"
 judges = pd.read_gbq(SQL, PROJECT)
+judges = pd.read_csv('/Users/yuxuanmei/Documents/GitHub/BA820_ym/sessions/03-kmeans/bq-results-20211027-104231-rq7b7sbqro47.csv')
 
 judges.shape
 

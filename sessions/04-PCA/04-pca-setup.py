@@ -52,7 +52,7 @@ from matplotlib import cm
 # 4. generate the silohouette plot for the solution
 # 5. create a boxplot of the column carat by cluster label (one boxplot for each cluster)
 
-diamonds = pd.read_csv('/Users/yuxuanmei/Documents/GitHub/BA820-Fall-2021/sessions/04-PCA/diamonds.csv')
+diamonds = pd.read_csv('/Users/yuxuanmei/Documents/GitHub/BA820_ym/sessions/04-PCA/diamonds.csv')
 diamonds = diamonds.select_dtypes(['number'])
 
 # standardize the data
@@ -68,6 +68,7 @@ KMeans()
 k5.fit(dia_scaled)
 k5_labs = k5.predict(dia_scaled)
 k5_labs
+
 
 # append on original dataset
 diamonds['k5'] = k5_labs
@@ -230,6 +231,7 @@ COLS = ['PC' + str(i) for i in range(1, len(comps)+1)]
 
 loadings = pd.DataFrame(comps.T, columns = COLS, index=judges.T.index)
 loadings
+test = PCA
 
 # plot 
 sns.heatmap(loadings, cmap = 'vlag')

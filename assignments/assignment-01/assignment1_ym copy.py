@@ -16,7 +16,7 @@ from sklearn.manifold import TSNE
 
 # data ingestion
 #url = 'https://github.com/Btibert3/BA820-Fall-2021/blob/d7f6ed4ff4e6f7daf198595b7dc2c8ee2ad3113b/assignments/assignment-01/forums.pkl'
-forums = pd.read_pickle('assignments/assignment-01/forums.pkl')
+forums = pd.read_csv('/Users/yuxuanmei/Documents/GitHub/BA820_ym/assignments/assignment-01/artist-music-catalog.csv')
 
 # data inspection and cleaning
 forums.head()
@@ -27,8 +27,10 @@ forums.describe().T
 # drop duplicated rows
 forums[forums.duplicated()]
 forums.drop_duplicates(inplace=True)
-forums.set_index('text', inplace=True)
 forums.isnull().sum().max()
+forums.set_index('name', inplace=True)
+forums = forums.select_dtypes(['number'])
+forums.drop(columns = 'Unnamed: 0', inplace = True)
 forums
 
 # standardize data
@@ -47,7 +49,7 @@ plt.show()
 
 
 # hclust
-hc1 = linkage(cdist, method='ward')
+hc1 = linkage(cdist, method='ward', metric = 'cosine')
 hc1
 
 # dendrogram
@@ -95,7 +97,7 @@ plt.show()
 ############
 
 # PCA
-pca = PCA(70)
+pca = PCA(.9)
 pcs = pca.fit_transform(scaled_forums)
 pcs.shape
 
