@@ -17,7 +17,8 @@ SQL = """
 select * from `questrom.datasets.groceries`
 """
 
-groceries = pd.read_gbq(SQL, PROJECT)
+#groceries = pd.read_gbq(SQL, PROJECT)
+groceries = pd.read_csv('/Users/yuxuanmei/Documents/GitHub/BA820_ym/lecture-notes/groceries.csv')
 
 # groceries = pd.read_csv("datasets/groceries.csv")
 
