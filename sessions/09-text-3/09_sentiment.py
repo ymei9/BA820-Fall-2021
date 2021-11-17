@@ -58,8 +58,41 @@ from newspaper import Article
 ## visualize the dataset via a scatterplot, and overlay the intent as a color on the plot
 ## Does UMAP help us sort the intents?
 
+# preprocessing
+airline =  pd.read_csv('/Users/yuxuanmei/Documents/GitHub/BA820_ym/sessions/09-text-3/airline.csv')
+temp = ['atis_airfare', 'atis_ground_service', 'atis_airline', 'atis_abbreviation']
+airline = airline[airline.iloc[:,0].isin(temp)]
+
+# tokenize
+cv = CountVectorizer()
+atext = airline.text
+atokens = cv.fit_transform(atext)
+
+len(cv.vocabulary_)
+atokens.shape
+
+# tfidf
+
+tfidf = TfidfVectorizer()
+idf = tfidf.fit_transform(atext)
+
+idf = pd.DataFrame(idf.toarray(), columns=tfidf.get_feature_names_out())
+idf
+
+plt.figure(figsize=(4,6))
+sns.heatmap(idf.T, xticklabels=True, yticklabels=True, cmap='Reds')
+plt.show()
+
+# # umap
+# from umap import UMAP
+# #import umap.umap_ as UMAP
+# umap = UMAP()
+# embeds = umap.fit_transform(idf)
 
 
+# umap_df = pd.DataFrame(embeds, columns = ['e1', 'e2'])
+# sns.scatterplot(data = umap_df, x='e1', y='e2', legend = 'full', hue = airline.intent)
+# plt.show()
 
 
 ###################################### NLTK parsing
@@ -69,24 +102,24 @@ from newspaper import Article
 ## NLTK has some built in tooling we can leverage!
 ## and trust me, other toolkits have their own approaches too!
 
-# from nltk.tokenize import word_tokenize, RegexpTokenizer, WordPunctTokenizer, TweetTokenizer
+from nltk.tokenize import word_tokenize, RegexpTokenizer, WordPunctTokenizer, TweetTokenizer
 
 # we may also need to download a tool to help with (sentence) parsing amongst other tasks
 
-# nltk.download('punkt')
+nltk.download('punkt')
 
-# corpus = ['I want my MTV! www.mtv.com', "Can't I have it all for $5.00 @customerservice #help"]
+corpus = ['I want my MTV! www.mtv.com', "Can't I have it all for $5.00 @customerservice #help"]
 
 # want to zoom in on a tokenizer to help with twitter, and perhaps other social data
-# social = TweetTokenizer()
+social = TweetTokenizer()
 
-# tokens_social = []
-# for doc in corpus:
-#   tokens_social.append(social.tokenize(doc))
+tokens_social = []
+for doc in corpus:
+  tokens_social.append(social.tokenize(doc))
 
 
 # # what do we have
-# tokens_social
+tokens_social
 
 
 
@@ -109,31 +142,34 @@ from newspaper import Article
 ##
 
 # setup the afinn "model"
-
+afinn = Afinn()
 # let's just start with something basic
-
+afinn.score('today is a good day!')
 # let's try another
-
+afinn.score('today is a horrible day')
 ############### Question:  What do you notice?  What happened (outside of getting a score)?
 
 ## let's look at the data behind this
-# URL = "https://raw.githubusercontent.com/fnielsen/afinn/master/afinn/data/AFINN-111.txt"
-# ad = pd.read_csv(URL, sep='\t', header=None, names=['token', 'score'])
-# ad.head(4)
+URL = "https://raw.githubusercontent.com/fnielsen/afinn/master/afinn/data/AFINN-111.txt"
+ad = pd.read_csv(URL, sep='\t', header=None, names=['token', 'score'])
+ad.head(4)
 
 # summary
-
+ad.describe()
 # what are the values for score
-
+sns.displot(ad.score)
+plt.show()
 ## THOUGHT Exercise:  What stands out relative to the distribution and the summary stats?
 
 # we can inspect easily to wrap our heads around the words
-
+ROWS = ad.token.str.contains('stop')
+ad.loc[ROWS,:]
 # another search
 
 # let's go back to a statement, see the score, and break it down
-
+afinn.scores('love hate')
 # what is the list of floats being used for the score
+afinn.scores('love hate hat sb')
 
 # confirming that we can make ths more concrete, and that
 # the other words are not considered important for sentiment
@@ -153,11 +189,27 @@ from newspaper import Article
 ##
 ##
 
+bruins = pd.read_csv('/Users/yuxuanmei/Documents/GitHub/BA820_ym/sessions/09-text-3/bruins.csv')
+bruins = bruins[(bruins['hour']<4) & (bruins['hour']>=0)]
+bruins['time'] = pd.to_datetime(bruins['created_at'])
 
+score = []
+for i in range (len(bruins)):
+    score.append(afinn.score(bruins.iloc[i, 2]))
+
+
+bruins['score'] = score
+bruins.sort_values(by = 'status_id', ascending= True, inplace=True)
+bruins.reset_index(inplace=True)
+
+sns.lineplot(data = bruins, x='time', y = 'score')
+plt.show()
+bruins.score.describe()
+
+bruins.groupby('hour').agg({'score': ['size', 'mean']})
 
 ################## WHAT DO YOU NOTICE ABOVE
 ################## should these be slightly neutral or negative?
-
 
 
 ##################################### Quick departure
@@ -167,20 +219,20 @@ from newspaper import Article
 ## let's break this down
 ##
 
-# URL = "https://getthematic.com/insights/word-clouds-harm-insights/"
-# article = Article(URL)
-# article.download()
-# article.parse()
+URL = "https://getthematic.com/insights/word-clouds-harm-insights/"
+article = Article(URL)
+article.download()
+article.parse()
 
 # we will use the article text from here
 # expects a string, more or less, not a list, per se
-# wc = WordCloud(background_color="white")
-# wordcloud = wc.generate(article.text)
+wc = WordCloud(background_color="white")
+wordcloud = wc.generate(article.text)
 
 # # Display the  plot:
-# plt.imshow(wordcloud)
-# plt.axis("off")
-# plt.show()
+plt.imshow(wordcloud)
+plt.axis("off")
+plt.show()
 
 #### run above a few times, look for
 ## 1- the color of word cloud
@@ -214,14 +266,14 @@ from newspaper import Article
 
 # setup -- isolate the flow
 
-# import spacy
-# from spacy import cli
-# from spacytextblob.spacytextblob import SpacyTextBlob
+import spacy
+from spacy import cli
+from spacytextblob.spacytextblob import SpacyTextBlob
 
-# cli.download("en_core_web_sm")
+cli.download("en_core_web_sm")
 
-# nlp = spacy.load("en_core_web_sm")
-# nlp.add_pipe('spacytextblob')
+nlp = spacy.load("en_core_web_sm")
+nlp.add_pipe('spacytextblob')
 
 # a simple corpus to show the document orientation
 
