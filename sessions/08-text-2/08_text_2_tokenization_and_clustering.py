@@ -13,15 +13,6 @@ Original file is located at
 #                 - reinforce text prep and tokenization options
 #                 - Cluster documents setup
 
-# installs
-! pip install newspaper3k
-! pip install spacy
-! pip install nltk
-! pip install -U scikit-learn
-! pip install scikit-plot
-! pip install umap-learn
-! pip install tokenwiser
-
 # imports
 import numpy as np
 import pandas as pd
@@ -43,29 +34,34 @@ from newspaper import Article
 ## https://newspaper.readthedocs.io/en/latest/
 
 # Boston based chatbot company, now called Mainstay
-# URL = "https://voicebot.ai/2021/02/16/conversational-ai-startup-admithub-raises-14m-for-higher-ed-chatbots/"
+URL = "https://voicebot.ai/2021/02/16/conversational-ai-startup-admithub-raises-14m-for-higher-ed-chatbots/"
 
-# # setup the article
-# article = Article(URL)
+# setup the article
+article = Article(URL)
 
-# # get the page
-# article.download()
+# get the page
+article.download()
 
-# # parse it -- extracts all sorts of info
-# article.parse()
+# parse it -- extracts all sorts of info
+article.parse()
+
+article.publish_date
+article.text
 
 # what do we have -- b/c its for news sites, attempts to parse things like dates
 
 # the text -- what we are really after
 
 # tokenize
-# cv = CountVectorizer()
+cv = CountVectorizer()
+atext = article.text
 
 # sklearn expects iterables, like lists
-# atokens = cv.fit_transform([atext])
+atokens = cv.fit_transform([atext])
 
 # how many tokens --- note the new syntax of get feature names out
-
+len(cv.vocabulary_)
+atokens.shape
 
 
 # THOUGHT EXERCISE:
@@ -106,13 +102,23 @@ from newspaper import Article
 ## we can pass in a tuple of the ngrams, default is 1,1
 
 # a new dataset
-# corpus = ["tokens, tokens everywhere"]
+corpus = ["tokens, tokens everywhere"]
 
 # we could only have bigrams
 
+# bigrams (two consecutive words, retain contextual meaning)
+ngrams2 = CountVectorizer(ngram_range= (1,2))
+
+ngrams_token = ngrams2.fit_transform(corpus)
+ngrams2.vocabulary_
+
 # the key point is that you can imagine it might be able to retain context
 # if we combine tokens with other n-grams.  
-#
+
+ngrams3 = CountVectorizer(ngram_range= (1,3))
+# pass in as a list
+atext_tok3 = ngrams3.fit_transform([atext])
+ngrams3.vocabulary_
 
 ###################################### Quick task
 ## 
@@ -121,11 +127,15 @@ from newspaper import Article
 ## to the feature space
 ##
 ## how many features have we extracted from the article?
-##
+
+len(ngrams3.vocabulary_)
 
 ###################################### Question
 ###### what does this say about our choice of tokenization
 ###### what tools might help with this "issue"?
+
+# use dimension reduction techniques like tsne, pca, umap
+
 
 ###################################### Stopwords
 ## by default stop words are not removed
@@ -136,25 +146,25 @@ from newspaper import Article
 # if this is your first time, you may need to download the stopwords
 # or on colab, for your session
 
-# nltk.download('stopwords')
+nltk.download('stopwords')
 
 
 ## OF COURSE, you could always downlod your own.  not the format of below, we just pass in a list in the end
 
 # lets get the stopwords
-# from nltk.corpus import stopwords
-# STOPWORDS = list(stopwords.words('english'))
+from nltk.corpus import stopwords
+STOPWORDS = list(stopwords.words('english'))
 
 # what do we have?
-
+STOPWORDS
 # the first few
-
+STOPWORDS[:5]
 # note that everything is lower case!
 
 # admittedly this is harder to find than it should be
 # but the languages supported in NLTK
 
-# stopwords.fileids()
+stopwords.fileids()
 
 # now you can imagine that is pretty limiting above, I know
 # the other approach is to use spacy
@@ -166,96 +176,104 @@ from newspaper import Article
 
 # lets keep the corpus small, so use the original article
 # but remove stopwords
-
-
+cv = CountVectorizer(stop_words=STOPWORDS)
+cv.fit_transform([atext])
+len(cv.vocabulary_)
 
 # 281 -> 237
 
-# and of course, we can see the vocab
-# cv.vocabulary_
+##################################### Max tokens
+# 
+# this can be helpful if you want to restrict to the top N most frequent tokens
+# this restricts your space at the start
+# but the tradeoff is less common words, perhaps, could help with ML models
+#     -- the tokens/phrases are specific to he known label, and while rare, often occur for the label
 
-###################################### Max tokens
-## 
-## this can be helpful if you want to restrict to the top N most frequent tokens
-## this restricts your space at the start
-## but the tradeoff is less common words, perhaps, could help with ML models
-##     -- the tokens/phrases are specific to he known label, and while rare, often occur for the label
+# we can use the article again, max with stopwords
 
-## we can use the article again, max with stopwords
+cv = CountVectorizer(max_features=20, stop_words=STOPWORDS)
+atokens = cv.fit_transform([atext])
+cv.vocabulary_
 
-# cv = CountVectorizer(max_features=20, stop_words=STOPWORDS)
-# atokens = cv.fit_transform([atext])
-# cv.vocabulary_
+##################################### character tokens
+# 
+# if you wanted, you can parse characters
+# a little out of scope, but highlighting the concept of tokenization can 
+# take all sorts of forms!
 
-###################################### character tokens
-## 
-## if you wanted, you can parse characters
-## a little out of scope, but highlighting the concept of tokenization can 
-## take all sorts of forms!
+x = ["Hello I can't"]
+charvec = CountVectorizer(analyzer='char', ngram_range=(1,1))
+char_toks = charvec.fit_transform(x)
+charvec.vocabulary_
 
-# x = ["Hello I can't"]
-# charvec = CountVectorizer(analyzer='char', ngram_range=(1,1))
+charvec = CountVectorizer(analyzer='char', ngram_range=(2,7))
+char_toks = charvec.fit_transform(x)
+charvec.vocabulary_
 
-###################################### custom pattern
-## 
-## if you really wanted to (or needed to), you can roll your own
-## tokenization
-## This is a little forward looking  .....
-## but highlights you all have the power to roll your own
-##
-## https://stackoverflow.com/questions/1576789/in-regex-what-does-w-mean
-##
+##################################### custom pattern
+# 
+# if you really wanted to (or needed to), you can roll your own
+# tokenization
+# This is a little forward looking  .....
+# but highlights you all have the power to roll your own
+#
+# https://stackoverflow.com/questions/1576789/in-regex-what-does-w-mean
+#
 
 # alpha numeric plus a single quote/contraction
-# PATTERN = "[\w']+"
+PATTERN = "[\w']+"
+cv = CountVectorizer(token_pattern=PATTERN)
+cv.fit(x)
+cv.transform(x).toarray
+cv.vocabulary_
 
 
 
-###################################### Your Turn
-## 
-## get the text from the two articles below using Newspaper3k
-## 1.  https://towardsdatascience.com/can-we-please-stop-using-word-clouds-eca2bbda7b9d
-## 2.  https://www.businessinsider.com/pie-charts-are-the-worst-2013-6
-##
-## create a bag of words representation of the two documents
-## keep the top 250 word tokens
-## remove stopwords baesd on the set we used above
-## use tokens, bigrams (2) and trigrams(3)
-## TRICKY!  Put back into a dataframe if you can
-## OPTIONAL:  Can you calculate the distance between the two docs?
+##################################### Your Turn
+# 
+# get the text from the two articles below using Newspaper3k
+# 1.  https://towardsdatascience.com/can-we-please-stop-using-word-clouds-eca2bbda7b9d
+# 2.  https://www.businessinsider.com/pie-charts-are-the-worst-2013-6
+#
+# create a bag of words representation of the two documents
+# keep the top 250 word tokens
+# remove stopwords baesd on the set we used above
+# use tokens, bigrams (2) and trigrams(3)
+# TRICKY!  Put back into a dataframe if you can
+# OPTIONAL:  Can you calculate the distance between the two docs?
 
-## remember, jaccard is intersection over union, 
-## instead of counts, we just said "is this word present"
-## value is proportion of elements that disagree
+# remember, jaccard is intersection over union, 
+# instead of counts, we just said "is this word present"
+# value is proportion of elements that disagree
 
-## lets do a little more parsing before we start clustering!
+# lets do a little more parsing before we start clustering!
 
-###################################### NLTK parsing
-###################################### Quick highlight that there are pre-built tools!
-## 
-## we may not have to reinvent the wheel!
-## NLTK has some built in tooling we can leverage!
-## and trust me, other toolkits have their own approaches too!
+##################################### NLTK parsing
+##################################### Quick highlight that there are pre-built tools!
+# 
+# we may not have to reinvent the wheel!
+# NLTK has some built in tooling we can leverage!
+# and trust me, other toolkits have their own approaches too!
 
-# from nltk.tokenize import word_tokenize, RegexpTokenizer, WordPunctTokenizer, TweetTokenizer
+from nltk.tokenize import word_tokenize, RegexpTokenizer, WordPunctTokenizer, TweetTokenizer
 
-# we may also need to download a tool to help with (sentence) parsing amongst other tasks
-# nltk.download('punkt')
+#we may also need to download a tool to help with (sentence) parsing amongst other tasks
+nltk.download('punkt')
 
-# corpus = ['I want my MTV! www.mtv.com', "Can't I have it all for $5.00 @customerservice #help"]
+corpus = ['I want my MTV! www.mtv.com', "Can't I have it all for $5.00 @customerservice #help"]
 
-# want to zoom in on a tokenizer to help with twitter, and perhaps other social data
-# social = TweetTokenizer()
+#want to zoom in on a tokenizer to help with twitter, and perhaps other social data
+social = TweetTokenizer()
 
-# tokens_social = []
-# for doc in corpus:
-#   tokens_social.append(social.tokenize(doc))
+tokens_social = []
+for doc in corpus:
+  tokens_social.append(social.tokenize(doc))
 
 
-# # what do we have
-# tokens_social
+# what do we have
+tokens_social
 
-###################################### Summary
+##################################### Summary
 ## 
 ## we have super powers via regex, but don't be afraid to look around
 ## some decent tools in sklearn, but nltk has some custom utilities we can leverage
@@ -296,31 +314,32 @@ from newspaper import Article
 ##
 
 # the same data
-# corpus = ["Can't I have it all for $5.00 @customerservice #help", 
-#           'I want my MTV!']
+corpus = ["Can't I have it all for $5.00 @customerservice #help", 
+           'I want my MTV!']
 
 # equivalent to CountVectorizer -> TfidfTransformer
 # basically if you want tfidf, do this, it saves a step
 # and you have the same options for parsing if you like
 
-# tfidf = TfidfVectorizer(token_pattern="[\w']+", ngram_range=(1,2))
-# tfidf.fit(corpus)
+tfidf = TfidfVectorizer(token_pattern="[\w']+", ngram_range=(1,2))
+tfidf.fit(corpus)
 
 ## just to call out, being able to specify the pattern can be 
 ## really powerful for specific tasks and business needs
 
 # lets put this into a dataframe
-# idf = tfidf.transform(corpus)
+idf = tfidf.transform(corpus)
 
-# idf = pd.DataFrame(idf.toarray(), columns=tfidf.get_feature_names_out())
+idf = pd.DataFrame(idf.toarray(), columns=tfidf.get_feature_names_out())
+idf
 
 
 
 # we could even heatmap this to help understand the intuition here
 
-# plt.figure(figsize=(4,6))
-# sns.heatmap(idf.T, xticklabels=True, yticklabels=True, cmap='Reds')
-# plt.show()
+plt.figure(figsize=(4,6))
+sns.heatmap(idf.T, xticklabels=True, yticklabels=True, cmap='Reds')
+plt.show()
 
 ################### NOTE:
 ## look at the weights generally, what do you see?
