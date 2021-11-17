@@ -130,20 +130,36 @@ Below are some resources for association rules.
 
 ## Text Analytics
 
--[Good discussion on Zipfs Law](https://medium.com/@_init_/using-zipfs-law-to-improve-neural-language-models-4c3d66e6d2f6)
--[TFiDF in 2020 = Experimentation is Important!](https://towardsdatascience.com/a-gentle-introduction-to-calculating-the-tf-idf-values-9e391f8a13e5)
+- [Working with Text in Scikit-Learn](https://scikit-learn.org/stable/tutorial/text_analytics/working_with_text_data.html#working-with-text-data)
+
+- [Good discussion on Zipfs Law](https://medium.com/@_init_/using-zipfs-law-to-improve-neural-language-models-4c3d66e6d2f6)
+
+- [TFiDF in 2020 = Experimentation is Important!](https://towardsdatascience.com/a-gentle-introduction-to-calculating-the-tf-idf-values-9e391f8a13e5)
+
 - [python libraries for nlp](https://towardsdatascience.com/python-libraries-for-natural-language-processing-be0e5a35dd64)
--["top" python libraries based on GH stars](https://kleiber.me/blog/2020/08/26/top-10-python-nlp-libraries-2020/)
--[Great Resource on text pre-processing use-cases](https://towardsdatascience.com/nlp-building-text-cleanup-and-preprocessing-pipeline-eba4095245a0)
--[Paper on Emoji Sentiment](https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0144296)
--[If you must wordcloud: A good tutorial](https://www.datacamp.com/community/tutorials/wordcloud-python)
--[TextBlob](https://textblob.readthedocs.io/en/dev/)
--[nltk sentiment - Vader - good overview of other toolkits](https://realpython.com/python-nltk-sentiment-analysis/#using-nltks-pre-trained-sentiment-analyzer)
--[Paper: Measuring Word Significance](https://arxiv.org/pdf/1508.02297.pdf) 
+
+- ["top" python libraries based on GH stars](https://kleiber.me/blog/2020/08/26/top-10-python-nlp-libraries-2020/)
+
+- [Great Resource on text pre-processing use-cases](https://towardsdatascience.com/nlp-building-text-cleanup-and-preprocessing-pipeline-eba4095245a0)
+
+- [Paper on Emoji Sentiment](https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0144296)
+
+- [If you must wordcloud: A good tutorial](https://www.datacamp.com/community/tutorials/wordcloud-python)
+
+- [TextBlob](https://textblob.readthedocs.io/en/dev/)
+
+- [nltk sentiment - Vader - good overview of other toolkits](https://realpython.com/python-nltk-sentiment-analysis/#using-nltks-pre-trained-sentiment-analyzer)
+
+- [Paper: Measuring Word Significance](https://arxiv.org/pdf/1508.02297.pdf) 
+
 - [Gensim Word2Vec tutorial](https://radimrehurek.com/gensim/auto_examples/tutorials/run_word2vec.html) 
-- [Word Embedding Intuition](https://towardsdatascience.com/word-embeddings-intuition-and-some-maths-to-understand-end-to-end-skip-gram-model-cab57760c745) 
+
+- [Word Embedding Intuition](https://towardsdatascience.com/word-embeddings-intuition-and-some-maths-to-understand-end-to-end-skip-gram-model-cab57760c745)
+
 - [fastText vectors - many languages](https://github.com/facebookresearch/fastText/blob/master/docs/crawl-vectors.md#models) 
+
 - [Document Vectors paper](https://cs.stanford.edu/~quocle/paragraph_vector.pdf)
+
 
 
 ## Scikit Resources

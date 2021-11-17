@@ -5,13 +5,13 @@
 #                 - Cluster documents setup
 
 # installs
-! pip install newspaper3k
-! pip install spacy
-! pip install nltk
-! pip install -U scikit-learn
-! pip install scikit-plot
-! pip install umap-learn
-! pip install tokenwiser
+# ! pip install newspaper3k
+# ! pip install spacy
+# ! pip install nltk
+# ! pip install -U scikit-learn
+# ! pip install scikit-plot
+# ! pip install umap-learn
+# ! pip install tokenwiser
 
 # imports
 import numpy as np
@@ -34,30 +34,35 @@ from newspaper import Article
 ## https://newspaper.readthedocs.io/en/latest/
 
 # Boston based chatbot company, now called Mainstay
-# URL = "https://voicebot.ai/2021/02/16/conversational-ai-startup-admithub-raises-14m-for-higher-ed-chatbots/"
+URL = "https://voicebot.ai/2021/02/16/conversational-ai-startup-admithub-raises-14m-for-higher-ed-chatbots/"
 
 # # setup the article
-# article = Article(URL)
+article = Article(URL)
 
 # # get the page
-# article.download()
+article.download()
 
 # # parse it -- extracts all sorts of info
-# article.parse()
+article.parse()
 
 # what do we have -- b/c its for news sites, attempts to parse things like dates
+article.publish_date
 
 # the text -- what we are really after
+article.text
+
 
 # tokenize
-# cv = CountVectorizer()
+cv = CountVectorizer()
 
 # sklearn expects iterables, like lists
-# atokens = cv.fit_transform([atext])
+atext = article.text
+atokens = cv.fit_transform([atext])
 
 # how many tokens --- note the new syntax of get feature names out
-
-
+len(cv.vocabulary_)
+# 281
+atokens.shape
 
 # THOUGHT EXERCISE:
 # we have a doc-term  matrix with one doc and the terms in the columns
@@ -97,9 +102,12 @@ from newspaper import Article
 ## we can pass in a tuple of the ngrams, default is 1,1
 
 # a new dataset
-# corpus = ["tokens, tokens everywhere"]
+corpus = ["tokens, tokens everywhere"]
 
 # we could only have bigrams
+ngrams2 = CountVectorizer(ngram_range=(1, 2))
+ngrams2_tok = ngrams2.fit_transform(corpus)
+ngrams2.vocabulary_
 
 # the key point is that you can imagine it might be able to retain context
 # if we combine tokens with other n-grams.  
@@ -114,6 +122,13 @@ from newspaper import Article
 ## how many features have we extracted from the article?
 ##
 
+cv = CountVectorizer(ngram_range=(1,3))
+cv.fit([atext])
+len(cv.vocabulary_)
+doc = cv.transform([atext])
+doc.shape
+
+
 ###################################### Question
 ###### what does this say about our choice of tokenization
 ###### what tools might help with this "issue"?
@@ -127,16 +142,17 @@ from newspaper import Article
 # if this is your first time, you may need to download the stopwords
 # or on colab, for your session
 
-# nltk.download('stopwords')
-
+nltk.download('stopwords')
 
 ## OF COURSE, you could always downlod your own.  not the format of below, we just pass in a list in the end
 
 # lets get the stopwords
-# from nltk.corpus import stopwords
-# STOPWORDS = list(stopwords.words('english'))
+from nltk.corpus import stopwords
+STOPWORDS = list(stopwords.words('english'))
 
 # what do we have?
+type(STOPWORDS)
+STOPWORDS[:5]
 
 # the first few
 
@@ -145,7 +161,7 @@ from newspaper import Article
 # admittedly this is harder to find than it should be
 # but the languages supported in NLTK
 
-# stopwords.fileids()
+stopwords.fileids()
 
 # now you can imagine that is pretty limiting above, I know
 # the other approach is to use spacy
@@ -157,8 +173,9 @@ from newspaper import Article
 
 # lets keep the corpus small, so use the original article
 # but remove stopwords
-
-
+cv = CountVectorizer(stop_words=STOPWORDS)
+atokens = cv.fit_transform([atext])
+len(cv.vocabulary_)
 
 # 281 -> 237
 
@@ -184,8 +201,16 @@ from newspaper import Article
 ## a little out of scope, but highlighting the concept of tokenization can 
 ## take all sorts of forms!
 
-# x = ["Hello I can't"]
-# charvec = CountVectorizer(analyzer='char', ngram_range=(1,1))
+x = ["Hello I can't"]
+charvec = CountVectorizer(analyzer='char', ngram_range=(1,1))
+char_tokens = charvec.fit(x)
+charvec.vocabulary_
+
+charvec = CountVectorizer(analyzer='char', ngram_range=(2,7))
+char_tokens = charvec.fit(x)
+charvec.vocabulary_
+
+
 
 ###################################### custom pattern
 ## 
@@ -198,8 +223,10 @@ from newspaper import Article
 ##
 
 # alpha numeric plus a single quote/contraction
-# PATTERN = "[\w']+"
-
+PATTERN = "[\w']+"
+cv = CountVectorizer(token_pattern=PATTERN)
+cv.fit(x)
+cv.vocabulary_
 
 
 ###################################### Your Turn
